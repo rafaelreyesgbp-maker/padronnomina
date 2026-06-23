@@ -113,6 +113,42 @@ def extract_rfcs(content):
             print(f'  Fallback fallo: {e2}')
     return rfcs
 
+def build_fuzzy_index(rfcs):
+    """
+    Índice de bloques para búsqueda fuzzy con ≤2 errores.
+    Principio de casilla de paloma: si un RFC de largo L tiene ≤2 sustituciones,
+    al menos 1 de sus 3 bloques iguales es idéntico al original.
+    Bloques: [0:4], [4:8], [8:L] para largo 12 ó 13.
+    """
+    from collections import defaultdict
+    idx = defaultdict(set)
+    for rfc in rfcs:
+        n = len(rfc)
+        if n < 9: continue
+        mid = n // 3
+        idx[(0, rfc[:mid])].add(rfc)
+        idx[(1, rfc[mid:2*mid])].add(rfc)
+        idx[(2, rfc[2*mid:])].add(rfc)
+    return idx
+
+def fuzzy_find(rfc, idx, max_err=2):
+    """Busca el RFC más cercano en el índice con ≤max_err sustituciones."""
+    n = len(rfc)
+    if n < 9: return None, 99
+    mid = n // 3
+    candidates = (idx.get((0, rfc[:mid]),   set()) |
+                  idx.get((1, rfc[mid:2*mid]), set()) |
+                  idx.get((2, rfc[2*mid:]),   set()))
+    candidates.discard(rfc)
+    best, best_d = None, max_err + 1
+    for c in candidates:
+        if len(c) != n: continue
+        d = sum(a != b for a, b in zip(rfc, c))
+        if d < best_d:
+            best_d, best = d, c
+            if d == 1: break   # no se puede mejorar más
+    return best, best_d
+
 def compute(imss_records, rfc_sets):
     nom  = rfc_sets.get('nomina',      set())
     ced  = rfc_sets.get('cedular',     set())
@@ -122,32 +158,63 @@ def compute(imss_records, rfc_sets):
     agu  = rfc_sets.get('agua',        set())
     cemp = rfc_sets.get('cedular_emp', set())
 
-    sin = [r for r in imss_records if r['rfc'] not in nom]
-    n   = len(sin)
+    # 1. Deduplicar IMSS por RFC (mismo patrón con varias sucursales/direcciones)
+    #    Conservar el registro con más trabajadores; sumar si se prefiere acumulado
+    dedup = {}
+    for r in imss_records:
+        rfc = r['rfc']
+        if rfc not in dedup:
+            dedup[rfc] = dict(r)
+        else:
+            t_new = r['trabajadores'] or 0
+            t_old = dedup[rfc]['trabajadores'] or 0
+            if t_new > t_old:
+                dedup[rfc] = dict(r)   # quedarse con la dirección que tiene más trab.
+    imss_uniq = list(dedup.values())
+    print(f'  IMSS únicos: {len(imss_uniq):,} (de {len(imss_records):,} totales)')
+
+    # 2. Excluir los que ya están en nómina (exactos)
+    sin_exacto = [r for r in imss_uniq if r['rfc'] not in nom]
+
+    # 3. Fuzzy: excluir RFC con ≤2 errores vs nómina (error de captura en AAFY)
+    print('  Construyendo índice fuzzy...')
+    nom_idx = build_fuzzy_index(nom)
+    sin = []
+    fuzzy_excl = 0
+    for r in sin_exacto:
+        similar, _ = fuzzy_find(r['rfc'], nom_idx, max_err=2)
+        if similar:
+            fuzzy_excl += 1   # probable error tipográfico → excluir silenciosamente
+        else:
+            sin.append(r)
+    print(f'  Excluidos por error tipográfico en RFC: {fuzzy_excl:,}')
+
+    n        = len(sin)
     sin_rfcs = {r['rfc'] for r in sin}
 
     rows = [{
-        'rfc':         r['rfc'],
-        'nombre':      r['nombre'],
-        'direccion':   r['direccion'],
+        'rfc':          r['rfc'],
+        'nombre':       r['nombre'],
+        'direccion':    r['direccion'],
         'trabajadores': r['trabajadores'],
-        'cedular_emp': r['rfc'] in cemp,
-        'profesional': r['rfc'] in pro,
-        'hospedaje':   r['rfc'] in hos,
-        'gases':       r['rfc'] in gas,
-        'agua':        r['rfc'] in agu,
+        'cedular_emp':  r['rfc'] in cemp,
+        'profesional':  r['rfc'] in pro,
+        'hospedaje':    r['rfc'] in hos,
+        'gases':        r['rfc'] in gas,
+        'agua':         r['rfc'] in agu,
     } for r in sin]
 
     def pct(s): return round(len(s & sin_rfcs) / n * 100, 2) if n else 0.0
     stats = {
-        'total_imss':      len(imss_records),
-        'total_nomina':    len(nom),
-        'sin_nomina':      n,
-        'pct_cedular_emp': pct(cemp),
-        'pct_profesional': pct(pro),
-        'pct_hospedaje':   pct(hos),
-        'pct_gases':       pct(gas),
-        'pct_agua':        pct(agu),
+        'total_imss':        len(imss_uniq),        # únicos
+        'total_nomina':      len(nom),
+        'sin_nomina':        n,
+        'excluidos_fuzzy':   fuzzy_excl,
+        'pct_cedular_emp':   pct(cemp),
+        'pct_profesional':   pct(pro),
+        'pct_hospedaje':     pct(hos),
+        'pct_gases':         pct(gas),
+        'pct_agua':          pct(agu),
     }
     return rows, stats
 
