@@ -25,23 +25,10 @@ jobs:
       - name: Ejecutar actualización
         run: python update_dashboard.py
 
-      - name: Commit de data.json
+      - name: Commit y push de data.json
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data.json
           git diff --cached --quiet || git commit -m "Auto-update data.json $(date +'%Y-%m-%d %H:%M') UTC"
-
-      - name: Push al repositorio
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}
-
-      - name: Deploy a Netlify
-        run: |
-          npm install -g netlify-cli
-          mkdir -p deploy
-          cp audit_dashboard.html deploy/index.html
-          cp data.json deploy/data.json
-          netlify deploy --prod --dir=deploy --site=${{ secrets.NETLIFY_SITE_ID }} --auth=${{ secrets.NETLIFY_AUTH_TOKEN }}
+          git push
