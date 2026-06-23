@@ -4,58 +4,62 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Auditoría Fiscal – IMSS vs Nómina</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e}
-  header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  header h1{font-size:1.25rem;font-weight:700;letter-spacing:.3px}
-  #statusBar{font-size:.78rem;background:rgba(255,255,255,.13);padding:5px 12px;border-radius:20px;white-space:nowrap}
-  #statusBar.ok{background:rgba(52,199,89,.25);color:#6effa1}
-  #statusBar.error{background:rgba(255,69,58,.25);color:#ff9d97}
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;padding:20px 28px}
-  .kpi{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-  .kpi-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;margin-bottom:6px}
-  .kpi-value{font-size:1.65rem;font-weight:700;color:#1a1a2e}
-  .kpi-value.red{color:#ef4444}
-  .kpi-value.amber{color:#f59e0b}
-  .controls{padding:0 28px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .controls input{flex:1;min-width:220px;padding:9px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;outline:none;transition:border .2s}
-  .controls input:focus{border-color:#6366f1}
-  .btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.2s}
-  .btn-primary{background:#6366f1;color:#fff}.btn-primary:hover{background:#4f46e5}
-  .btn-outline{background:#fff;color:#374151;border:1.5px solid #d1d5db}.btn-outline:hover{border-color:#6366f1;color:#6366f1}
-  .filter-row{display:flex;gap:8px;flex-wrap:wrap}
-  .chip{padding:6px 14px;border-radius:20px;border:1.5px solid #d1d5db;background:#fff;font-size:.78rem;cursor:pointer;transition:.2s;font-weight:500}
-  .chip.active{background:#6366f1;color:#fff;border-color:#6366f1}
-  .table-wrap{padding:0 28px 28px;overflow-x:auto}
-  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);font-size:.85rem}
-  thead{background:#1a1a2e;color:#fff}
-  th{padding:12px 14px;text-align:left;font-weight:600;letter-spacing:.3px;cursor:pointer;user-select:none;white-space:nowrap}
-  th:hover{background:#16213e}
-  td{padding:10px 14px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:#f9fafb}
-  .yes{color:#16a34a;font-weight:700;font-size:1rem}
-  .no{color:#dc2626;opacity:.5;font-size:.9rem}
-  .rfc{font-family:monospace;font-size:.82rem;letter-spacing:.4px}
-  .pagination{display:flex;gap:8px;justify-content:center;align-items:center;padding:0 28px 28px}
-  .pagination .btn{min-width:38px;font-size:.82rem}
-  #pageInfo{font-size:.85rem;color:#6b7280}
-  #loadBanner{background:#e0e7ff;border:1.5px solid #c7d2fe;border-radius:10px;padding:13px 18px;margin:0 28px 16px;font-size:.87rem;color:#3730a3;display:flex;align-items:center;gap:10px}
-  .spinner{width:18px;height:18px;border:2.5px solid #c7d2fe;border-top-color:#6366f1;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  #noData{text-align:center;padding:48px 20px;color:#6b7280;display:none}
-  #updatedAt{font-size:.72rem;color:rgba(255,255,255,.5);align-self:center}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#1a1a2e;font-size:14px}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+header h1{font-size:1.1rem;font-weight:700}
+#statusBar{font-size:.75rem;background:rgba(255,255,255,.13);padding:4px 12px;border-radius:20px}
+#statusBar.ok{background:rgba(52,199,89,.25);color:#6effa1}
+#statusBar.error{background:rgba(255,69,58,.25);color:#ff9d97}
+#updatedAt{font-size:.7rem;color:rgba(255,255,255,.5)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:16px 24px}
+.kpi{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.kpi-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:4px}
+.kpi-value{font-size:1.5rem;font-weight:700}
+.kpi-value.red{color:#ef4444}.kpi-value.amber{color:#f59e0b}
+.controls{padding:0 24px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls input{flex:1;min-width:200px;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.85rem;outline:none}
+.controls input:focus{border-color:#6366f1}
+.btn{padding:7px 14px;border:none;border-radius:7px;cursor:pointer;font-size:.8rem;font-weight:600;transition:.15s}
+.btn-primary{background:#6366f1;color:#fff}.btn-primary:hover{background:#4f46e5}
+.btn-green{background:#16a34a;color:#fff}.btn-green:hover{background:#15803d}
+.btn-outline{background:#fff;color:#374151;border:1.5px solid #d1d5db}.btn-outline:hover{border-color:#6366f1;color:#6366f1}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;border:1.5px solid #d1d5db;background:#fff;font-size:.75rem;cursor:pointer;font-weight:500}
+.chip.active{background:#6366f1;color:#fff;border-color:#6366f1}
+.table-wrap{padding:0 24px 24px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07);font-size:.82rem}
+thead{background:#1a1a2e;color:#fff}
+th{padding:10px 12px;text-align:left;font-weight:600;cursor:pointer;user-select:none;white-space:nowrap;font-size:.78rem}
+th:hover{background:#16213e}
+td{padding:8px 12px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f9fafb}
+.yes{color:#16a34a;font-weight:700}
+.no{color:#dc2626;opacity:.45}
+.rfc-cell{font-family:monospace;font-size:.78rem;white-space:nowrap}
+.nombre-cell{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dir-cell{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6b7280;font-size:.78rem}
+.trab-cell{text-align:right;font-weight:600;color:#374151}
+td.chk{text-align:center;font-size:1rem}
+th.chk{text-align:center}
+.pagination{display:flex;gap:6px;justify-content:center;align-items:center;padding:0 24px 24px}
+#pageInfo{font-size:.82rem;color:#6b7280}
+#loadBanner{background:#e0e7ff;border:1.5px solid #c7d2fe;border-radius:8px;padding:11px 16px;margin:0 24px 12px;font-size:.85rem;color:#3730a3;display:flex;align-items:center;gap:8px}
+.spinner{width:16px;height:16px;border:2px solid #c7d2fe;border-top-color:#6366f1;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+#noData{text-align:center;padding:40px;color:#6b7280;display:none}
 </style>
 </head>
 <body>
-
 <header>
   <div>
-    <div style="font-size:.72rem;opacity:.6;margin-bottom:2px">SECRETARÍA DE FINANZAS</div>
+    <div style="font-size:.65rem;opacity:.55;margin-bottom:2px">SECRETARÍA DE FINANZAS</div>
     <h1>Auditoría Fiscal — IMSS vs Nómina 2026</h1>
   </div>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <span id="updatedAt"></span>
     <span id="statusBar">Cargando…</span>
   </div>
@@ -67,40 +71,44 @@
   <div class="kpi"><div class="kpi-label">Total IMSS Mayo 2026</div><div class="kpi-value" id="k-imss">—</div></div>
   <div class="kpi"><div class="kpi-label">Padrón Nómina</div><div class="kpi-value" id="k-nom">—</div></div>
   <div class="kpi"><div class="kpi-label">Sin Nómina ⚠</div><div class="kpi-value red" id="k-sin">—</div></div>
-  <div class="kpi"><div class="kpi-label">En Cedular Emp.</div><div class="kpi-value amber" id="k-ced">—</div></div>
-  <div class="kpi"><div class="kpi-label">En Profesional</div><div class="kpi-value amber" id="k-pro">—</div></div>
-  <div class="kpi"><div class="kpi-label">En Hospedaje</div><div class="kpi-value amber" id="k-hos">—</div></div>
+  <div class="kpi"><div class="kpi-label">Cedular Emp.</div><div class="kpi-value amber" id="k-ced">—</div></div>
+  <div class="kpi"><div class="kpi-label">Profesional</div><div class="kpi-value amber" id="k-pro">—</div></div>
+  <div class="kpi"><div class="kpi-label">Hospedaje</div><div class="kpi-value amber" id="k-hos">—</div></div>
 </div>
 
 <div class="controls">
-  <input id="search" placeholder="Buscar por RFC…" oninput="applyFilters()">
+  <input id="search" placeholder="Buscar RFC o nombre…" oninput="applyFilters()">
   <div class="filter-row">
     <div class="chip active" id="f-all"     onclick="setFilter('all')"        >Todos</div>
-    <div class="chip"        id="f-ced"     onclick="setFilter('cedular_emp')">Cedular Emp.</div>
-    <div class="chip"        id="f-pro"     onclick="setFilter('profesional')">Profesional</div>
-    <div class="chip"        id="f-hos"     onclick="setFilter('hospedaje')"  >Hospedaje</div>
-    <div class="chip"        id="f-gas"     onclick="setFilter('gases')"      >Gases</div>
+    <div class="chip"        id="f-ced"     onclick="setFilter('cedular_emp')">Ced. Emp.</div>
+    <div class="chip"        id="f-pro"     onclick="setFilter('profesional')">Prof.</div>
+    <div class="chip"        id="f-hos"     onclick="setFilter('hospedaje')"  >Hosp.</div>
+    <div class="chip"        id="f-gas"     onclick="setFilter('gases')"      >Gas</div>
     <div class="chip"        id="f-agua"    onclick="setFilter('agua')"       >Agua</div>
     <div class="chip"        id="f-ninguno" onclick="setFilter('ninguno')"    >Sin padrón</div>
   </div>
-  <button class="btn btn-outline" onclick="exportCSV()">⬇ CSV</button>
+  <button class="btn btn-green"   onclick="exportExcel()">⬇ Excel</button>
+  <button class="btn btn-outline" onclick="exportCSV()"  >⬇ CSV</button>
 </div>
 
 <div class="table-wrap">
-  <table id="mainTable">
+  <table>
     <thead>
       <tr>
         <th onclick="sortBy('rfc')">#  RFC ↕</th>
-        <th onclick="sortBy('cedular_emp')">Cedular Emp. ↕</th>
-        <th onclick="sortBy('profesional')">Profesional ↕</th>
-        <th onclick="sortBy('hospedaje')">Hospedaje ↕</th>
-        <th onclick="sortBy('gases')">Gases ↕</th>
-        <th onclick="sortBy('agua')">Agua ↕</th>
+        <th onclick="sortBy('nombre')">Nombre / Razón Social ↕</th>
+        <th onclick="sortBy('direccion')">Dirección ↕</th>
+        <th onclick="sortBy('trabajadores')" style="text-align:right">Trab. ↕</th>
+        <th class="chk" onclick="sortBy('cedular_emp')">Ced.</th>
+        <th class="chk" onclick="sortBy('profesional')">Prof.</th>
+        <th class="chk" onclick="sortBy('hospedaje')">Hosp.</th>
+        <th class="chk" onclick="sortBy('gases')">Gas</th>
+        <th class="chk" onclick="sortBy('agua')">Agua</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
   </table>
-  <div id="noData">No se encontraron registros con ese filtro.</div>
+  <div id="noData">No se encontraron registros.</div>
 </div>
 
 <div class="pagination">
@@ -110,8 +118,8 @@
 </div>
 
 <script>
-const PAGE_SIZE = 100;
-let allRows = [], filtered = [], sortCol = '', sortAsc = true, curFilter = 'all', curPage = 1;
+var PAGE_SIZE = 100;
+var allRows = [], filtered = [], sortCol = '', sortAsc = true, curFilter = 'all', curPage = 1;
 
 function setText(id, v){ var el = document.getElementById(id); if(el) el.textContent = v; }
 function setStatus(cls, msg){ var el = document.getElementById('statusBar'); el.className = cls; el.textContent = msg; }
@@ -123,115 +131,139 @@ function setBanner(msg, show){
 }
 
 function renderStats(s){
-  setText('k-imss', s.total_imss.toLocaleString('es-MX'));
-  setText('k-nom',  s.total_nomina.toLocaleString('es-MX'));
-  setText('k-sin',  s.sin_nomina.toLocaleString('es-MX'));
-  setText('k-ced',  (s.pct_cedular_emp || 0).toFixed(2) + '%');
-  setText('k-pro',  (s.pct_profesional || 0).toFixed(2) + '%');
-  setText('k-hos',  (s.pct_hospedaje   || 0).toFixed(2) + '%');
+  setText('k-imss', (s.total_imss||0).toLocaleString('es-MX'));
+  setText('k-nom',  (s.total_nomina||0).toLocaleString('es-MX'));
+  setText('k-sin',  (s.sin_nomina||0).toLocaleString('es-MX'));
+  setText('k-ced',  (s.pct_cedular_emp||0).toFixed(2)+'%');
+  setText('k-pro',  (s.pct_profesional||0).toFixed(2)+'%');
+  setText('k-hos',  (s.pct_hospedaje||0).toFixed(2)+'%');
 }
 
 function setFilter(f){
   curFilter = f;
-  var map = {all:'all', ced:'cedular_emp', pro:'profesional', hos:'hospedaje', gas:'gases', agua:'agua', ninguno:'ninguno'};
+  var map = {all:'all',ced:'cedular_emp',pro:'profesional',hos:'hospedaje',gas:'gases',agua:'agua',ninguno:'ninguno'};
   Object.keys(map).forEach(function(x){
     var el = document.getElementById('f-'+x);
-    if(el) el.className = 'chip' + (map[x] === f ? ' active' : '');
+    if(el) el.className = 'chip'+(map[x]===f?' active':'');
   });
-  curPage = 1;
-  applyFilters();
+  curPage = 1; applyFilters();
 }
 
 function applyFilters(){
-  var q = (document.getElementById('search').value || '').trim().toUpperCase();
+  var q = (document.getElementById('search').value||'').trim().toUpperCase();
   filtered = allRows.filter(function(r){
-    if(q && r.rfc.indexOf(q) === -1) return false;
-    if(curFilter === 'all') return true;
-    if(curFilter === 'ninguno') return !r.cedular_emp && !r.profesional && !r.hospedaje && !r.gases && !r.agua;
+    if(q && r.rfc.indexOf(q)===-1 && (r.nombre||'').toUpperCase().indexOf(q)===-1) return false;
+    if(curFilter==='all') return true;
+    if(curFilter==='ninguno') return !r.cedular_emp&&!r.profesional&&!r.hospedaje&&!r.gases&&!r.agua;
     return !!r[curFilter];
   });
   if(sortCol) filtered.sort(function(a,b){
-    var av = a[sortCol], bv = b[sortCol];
-    if(typeof av === 'boolean') return sortAsc ? (bv ? 1 : 0) - (av ? 1 : 0) : (av ? 1 : 0) - (bv ? 1 : 0);
-    return sortAsc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    var av=a[sortCol], bv=b[sortCol];
+    if(av===null||av===undefined) av = typeof bv==='number' ? -Infinity : '';
+    if(bv===null||bv===undefined) bv = typeof av==='number' ? -Infinity : '';
+    if(typeof av==='boolean') return sortAsc?(bv?1:0)-(av?1:0):(av?1:0)-(bv?1:0);
+    if(typeof av==='number')  return sortAsc?av-bv:bv-av;
+    return sortAsc?String(av).localeCompare(String(bv),'es'):String(bv).localeCompare(String(av),'es');
   });
   renderTable();
 }
 
-function sortBy(col){ if(sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; } applyFilters(); }
+function sortBy(col){ if(sortCol===col) sortAsc=!sortAsc; else{sortCol=col;sortAsc=true;} applyFilters(); }
 
-function chk(v){ return v ? '<span class="yes">&#10003;</span>' : '<span class="no">&#10007;</span>'; }
+function chk(v){ return v?'<span class="yes">✓</span>':'<span class="no">✗</span>'; }
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderTable(){
   var tbody = document.getElementById('tbody');
   var total = filtered.length;
-  var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  if(curPage > pages) curPage = pages;
-  var start = (curPage - 1) * PAGE_SIZE;
-  var slice = filtered.slice(start, start + PAGE_SIZE);
-
+  var pages = Math.max(1,Math.ceil(total/PAGE_SIZE));
+  if(curPage>pages) curPage=pages;
+  var start=(curPage-1)*PAGE_SIZE;
+  var slice=filtered.slice(start,start+PAGE_SIZE);
   if(!total){
-    tbody.innerHTML = '';
-    document.getElementById('noData').style.display = 'block';
+    tbody.innerHTML='';
+    document.getElementById('noData').style.display='block';
   } else {
-    document.getElementById('noData').style.display = 'none';
-    tbody.innerHTML = slice.map(function(r, i){
-      return '<tr>' +
-        '<td class="rfc">' + (start+i+1) + '. ' + r.rfc + '</td>' +
-        '<td>' + chk(r.cedular_emp)  + '</td>' +
-        '<td>' + chk(r.profesional)  + '</td>' +
-        '<td>' + chk(r.hospedaje)    + '</td>' +
-        '<td>' + chk(r.gases)        + '</td>' +
-        '<td>' + chk(r.agua)         + '</td>' +
+    document.getElementById('noData').style.display='none';
+    tbody.innerHTML=slice.map(function(r,i){
+      return '<tr>'+
+        '<td class="rfc-cell">'+(start+i+1)+'. '+esc(r.rfc)+'</td>'+
+        '<td class="nombre-cell" title="'+esc(r.nombre)+'">'+esc(r.nombre||'—')+'</td>'+
+        '<td class="dir-cell"   title="'+esc(r.direccion)+'">'+esc(r.direccion||'—')+'</td>'+
+        '<td class="trab-cell">'+(r.trabajadores!=null?r.trabajadores.toLocaleString('es-MX'):'—')+'</td>'+
+        '<td class="chk">'+chk(r.cedular_emp)+'</td>'+
+        '<td class="chk">'+chk(r.profesional)+'</td>'+
+        '<td class="chk">'+chk(r.hospedaje)+'</td>'+
+        '<td class="chk">'+chk(r.gases)+'</td>'+
+        '<td class="chk">'+chk(r.agua)+'</td>'+
         '</tr>';
     }).join('');
   }
-
-  setText('pageInfo', total ? 'Pag. ' + curPage + '/' + pages + ' — ' + total.toLocaleString('es-MX') + ' registros' : '0 registros');
-  document.getElementById('btnPrev').disabled = curPage <= 1;
-  document.getElementById('btnNext').disabled = curPage >= pages;
+  setText('pageInfo',total?'Pag. '+curPage+'/'+pages+' — '+total.toLocaleString('es-MX')+' registros':'0 registros');
+  document.getElementById('btnPrev').disabled=curPage<=1;
+  document.getElementById('btnNext').disabled=curPage>=pages;
 }
 
-function changePage(d){ curPage += d; renderTable(); }
+function changePage(d){ curPage+=d; renderTable(); }
+
+function exportExcel(){
+  if(typeof XLSX==='undefined'){ alert('La librería Excel aún está cargando, espera un momento.'); return; }
+  var data = filtered.map(function(r){
+    return {
+      'RFC': r.rfc,
+      'Nombre / Razón Social': r.nombre||'',
+      'Dirección': r.direccion||'',
+      'Trabajadores': r.trabajadores!=null?r.trabajadores:'',
+      'Cedular Emp.': r.cedular_emp?'SI':'NO',
+      'Profesional':  r.profesional?'SI':'NO',
+      'Hospedaje':    r.hospedaje?'SI':'NO',
+      'Gases':        r.gases?'SI':'NO',
+      'Agua':         r.agua?'SI':'NO'
+    };
+  });
+  var ws = XLSX.utils.json_to_sheet(data);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Auditoría');
+  // Anchos de columna
+  ws['!cols'] = [{wch:18},{wch:35},{wch:30},{wch:12},{wch:12},{wch:12},{wch:12},{wch:10},{wch:10}];
+  XLSX.writeFile(wb, 'auditoria_fiscal_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
 
 function exportCSV(){
-  var rows = [['RFC','Cedular Emp.','Profesional','Hospedaje','Gases','Agua']];
+  var rows=[['RFC','Nombre / Razón Social','Dirección','Trabajadores','Cedular Emp.','Profesional','Hospedaje','Gases','Agua']];
   filtered.forEach(function(r){
-    rows.push([r.rfc, r.cedular_emp?'SI':'NO', r.profesional?'SI':'NO', r.hospedaje?'SI':'NO', r.gases?'SI':'NO', r.agua?'SI':'NO']);
+    rows.push([r.rfc,r.nombre||'',r.direccion||'',r.trabajadores!=null?r.trabajadores:'',
+      r.cedular_emp?'SI':'NO',r.profesional?'SI':'NO',r.hospedaje?'SI':'NO',r.gases?'SI':'NO',r.agua?'SI':'NO']);
   });
-  var csv = rows.map(function(r){ return r.join(','); }).join('\n');
-  var a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,﻿' + encodeURIComponent(csv);
-  a.download = 'auditoria_fiscal_' + new Date().toISOString().slice(0,10) + '.csv';
+  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.download='auditoria_fiscal_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
 
 function loadData(){
   setBanner('Cargando datos actualizados…');
-  fetch('./data.json?t=' + Date.now())
-    .then(function(res){
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    })
+  fetch('./data.json?t='+Date.now())
+    .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
     .then(function(data){
-      allRows = data.rows || [];
-      renderStats(data.stats || {});
+      allRows = data.rows||[];
+      renderStats(data.stats||{});
       if(data.updated){
-        var d = new Date(data.updated);
-        setText('updatedAt', 'Actualizado: ' + d.toLocaleDateString('es-MX', {day:'2-digit',month:'short',year:'numeric'}) + ' ' + d.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'}) + ' UTC');
+        var d=new Date(data.updated);
+        setText('updatedAt','Act: '+d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})+' UTC');
       }
-      setStatus('ok', '✓ Datos cargados');
-      setBanner('', false);
+      setStatus('ok','✓ '+allRows.length.toLocaleString('es-MX')+' registros');
+      setBanner('',false);
       setFilter('all');
     })
     .catch(function(e){
-      console.error('Error cargando data.json:', e);
-      setStatus('error', '⚠ Sin datos');
-      setBanner('No se pudo cargar data.json — ejecuta el workflow en GitHub Actions para generar los datos.');
-      document.getElementById('loadBanner').style.background = '#fee2e2';
-      document.getElementById('loadBanner').style.borderColor = '#fca5a5';
-      document.getElementById('loadBanner').style.color = '#991b1b';
-      document.querySelector('#loadBanner .spinner').style.display = 'none';
+      console.error(e);
+      setStatus('error','⚠ Sin datos');
+      setBanner('No se pudo cargar data.json — ejecuta el workflow en GitHub Actions.');
+      document.getElementById('loadBanner').style.cssText='background:#fee2e2;border-color:#fca5a5;color:#991b1b;border-radius:8px;padding:11px 16px;margin:0 24px 12px;display:flex;align-items:center;gap:8px;font-size:.85rem;border-width:1.5px;border-style:solid';
+      document.querySelector('#loadBanner .spinner').style.display='none';
     });
 }
 
