@@ -256,6 +256,8 @@ function loadData(){
       }
       setStatus('ok','✓ '+allRows.length.toLocaleString('es-MX')+' registros');
       setBanner('',false);
+      // Ordenar por trabajadores de mayor a menor por defecto
+      sortCol = 'trabajadores'; sortAsc = false;
       setFilter('all');
     })
     .catch(function(e){

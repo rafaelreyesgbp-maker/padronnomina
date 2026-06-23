@@ -51,9 +51,11 @@ def extract_imss(content):
         print(f'  Columnas IMSS: {[str(h) for h in header[:15]]}')
 
         rfc_col  = find_col(header, 'rfc') or 0
-        nom_col  = find_col(header, 'razón social', 'razon social', 'nombre', 'denominaci')
-        dir_col  = find_col(header, 'domicilio', 'direcci', 'calle', 'municipio')
-        trab_col = find_col(header, 'trabajador', 'empleado', 'num. trab', 'número de trab')
+        nom_col  = find_col(header, 'razon', 'razón', 'razón social', 'razon social', 'nombre',
+                            'denominaci', 'patron', 'patrón', 'empresa', 'social', 'entidad', 'contribuyente')
+        dir_col  = find_col(header, 'domicilio', 'direcci', 'calle', 'municipio', 'colonia', 'estado')
+        trab_col = find_col(header, 'trabajador', 'empleado', 'num. trab', 'número de trab',
+                            'num trab', 'ntrab', 'asegurado', 'personal')
 
         print(f'  rfc_col={rfc_col} nom_col={nom_col} dir_col={dir_col} trab_col={trab_col}')
 
