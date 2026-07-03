@@ -9,281 +9,340 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --wine:        #7B1D3A;
-  --wine-dark:   #5C1529;
-  --wine-light:  #9C2548;
-  --gold:        #C9A84C;
-  --gold-light:  #E0C172;
-  --gold-dim:    #A88A35;
-  --bg:          #0D0D1B;
-  --bg2:         #141424;
-  --bg3:         #1B1B30;
-  --bg4:         #22223A;
-  --border:      rgba(201,168,76,.18);
-  --border2:     rgba(201,168,76,.08);
-  --text:        #E8E8F0;
-  --text-muted:  #8888A8;
-  --text-dim:    #5A5A78;
-  --green:       #2ECC71;
-  --red:         #E74C4C;
-  --amber:       #F0A800;
-  --radius:      10px;
-  --shadow:      0 4px 20px rgba(0,0,0,.45);
-  --shadow-sm:   0 2px 8px rgba(0,0,0,.3);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'Inter',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  font-size:14px;
-  min-height:100vh;
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM AAFY — Variables Institucionales
+═══════════════════════════════════════════════════════ */
+:root {
+  /* Fondos */
+  --bg-main:        #24111A;
+  --bg-secondary:   #2E101F;
+  --bg-card:        #2B1621;
+  --bg-elevated:    #331320;
+  --bg-hover:       #3F1828;
+
+  /* Institucional */
+  --wine:           #5E1738;
+  --wine-dark:      #2B0D1B;
+  --gold:           #D8A33C;
+  --gold-light:     #F0C15A;
+
+  /* Texto */
+  --text-primary:   #F5F4F3;
+  --text-secondary: #C8BEC5;
+  --text-muted:     #8E8388;
+
+  /* Bordes */
+  --border:         #46303C;
+
+  /* Estados */
+  --success:        #4CAF50;
+  --success-light:  #7AC943;
+  --warning:        #F5C542;
+  --orange:         #F39C12;
+  --danger:         #D84343;
+
+  /* Colores por módulo */
+  --mod-iertp:      #E85D75;
+  --mod-hospedaje:  #7AC943;
+  --mod-bebidas:    #D8A33C;
+  --mod-profesional:#4AA3DF;
+  --mod-empeño:     #9B59B6;
+  --mod-cedular:    #FF8A3D;
+
+  /* Métricas */
+  --radius-card:    18px;
+  --radius-btn:     14px;
+  --radius-input:   10px;
+  --shadow-card:    0 8px 24px rgba(0,0,0,.20);
+  --shadow-elevated:0 12px 32px rgba(0,0,0,.30);
+  --transition:     all .18s ease;
 }
 
-/* ── HEADER ── */
-header{
-  background:linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 60%, var(--wine-light) 100%);
-  border-bottom:2px solid var(--gold);
-  padding:0 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  min-height:70px;
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, var(--bg-main) 0%, var(--bg-secondary) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-size: 14px;
+  min-height: 100vh;
 }
-.header-brand{display:flex;align-items:center;gap:14px;padding:14px 0}
-.header-logo{
-  width:44px;height:44px;
-  background:rgba(255,255,255,.12);
-  border:1.5px solid rgba(201,168,76,.4);
-  border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.4rem;flex-shrink:0;
+
+/* ── HEADER INSTITUCIONAL ── */
+header {
+  background: linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 100%);
+  border-bottom: 1px solid var(--gold);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  min-height: 72px;
 }
-.header-text .agency{
-  font-family:'Montserrat',sans-serif;
-  font-size:.6rem;font-weight:600;
-  letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--gold);opacity:.85;margin-bottom:2px;
+.header-brand { display: flex; align-items: center; gap: 16px; padding: 16px 0; }
+.header-logo {
+  width: 44px; height: 44px;
+  background: rgba(216,163,60,.15);
+  border: 1.5px solid rgba(216,163,60,.35);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
 }
-.header-text .dept{
-  font-family:'Montserrat',sans-serif;
-  font-size:1rem;font-weight:700;
-  color:#fff;line-height:1.2;
+.header-text .agency {
+  font-family: 'Montserrat', sans-serif;
+  font-size: .58rem; font-weight: 600;
+  letter-spacing: 1.8px; text-transform: uppercase;
+  color: var(--gold); opacity: .9; margin-bottom: 3px;
 }
-.header-text .report{
-  font-size:.75rem;color:rgba(255,255,255,.65);margin-top:3px;
-  font-weight:400;
+.header-text .dept {
+  font-family: 'Montserrat', sans-serif;
+  font-size: .98rem; font-weight: 700;
+  color: var(--text-primary); line-height: 1.2;
 }
-.header-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 0}
-#statusBar{
-  font-size:.72rem;font-weight:600;
-  padding:4px 14px;border-radius:20px;
-  background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);
-  border:1px solid rgba(255,255,255,.15);
+.header-text .report {
+  font-family: 'Inter', sans-serif;
+  font-size: .73rem; color: var(--text-secondary);
+  margin-top: 3px; font-weight: 400;
 }
-#statusBar.ok{background:rgba(46,204,113,.2);color:#7fffb8;border-color:rgba(46,204,113,.35)}
-#statusBar.error{background:rgba(231,76,76,.2);color:#ffaaaa;border-color:rgba(231,76,76,.35)}
-#updatedAt{font-size:.68rem;color:rgba(255,255,255,.45)}
+.header-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 12px 0; }
+
+#statusBar {
+  font-family: 'Inter', sans-serif;
+  font-size: .7rem; font-weight: 600;
+  padding: 5px 16px; border-radius: 20px;
+  background: rgba(255,255,255,.1); color: var(--text-secondary);
+  border: 1px solid rgba(255,255,255,.12);
+  transition: var(--transition);
+}
+#statusBar.ok    { background: rgba(76,175,80,.2); color: #9fffb8; border-color: rgba(76,175,80,.3); }
+#statusBar.error { background: rgba(216,67,67,.2); color: #ffb8b8; border-color: rgba(216,67,67,.3); }
+#updatedAt { font-size: .66rem; color: var(--text-muted); }
 
 /* ── LOAD BANNER ── */
-#loadBanner{
-  background:linear-gradient(90deg, var(--bg2), var(--bg3));
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:11px 18px;margin:16px 24px 0;
-  font-size:.84rem;color:var(--gold);
-  display:flex;align-items:center;gap:10px;
+#loadBanner {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-card);
+  padding: 14px 20px; margin: 24px 32px 0;
+  font-size: .84rem; color: var(--gold);
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow-card);
 }
-.spinner{
-  width:15px;height:15px;
-  border:2px solid rgba(201,168,76,.25);
-  border-top-color:var(--gold);
-  border-radius:50%;
-  animation:spin .8s linear infinite;flex-shrink:0;
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(216,163,60,.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin .8s linear infinite; flex-shrink: 0;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── KPI GRID ── */
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:14px;padding:20px 24px 8px;
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px; padding: 24px 32px 8px;
 }
-.kpi{
-  background:var(--bg2);
-  border:1px solid var(--border2);
-  border-radius:var(--radius);
-  padding:16px 18px;
-  box-shadow:var(--shadow-sm);
-  position:relative;overflow:hidden;
-  transition:border-color .2s;
+.kpi {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 20px 20px 18px;
+  box-shadow: var(--shadow-card);
+  position: relative; overflow: hidden;
+  transition: var(--transition);
+  cursor: default;
 }
-.kpi::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--gold);opacity:.35;
+/* Borde superior de color por módulo */
+.kpi::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--kpi-color, var(--gold));
+  opacity: .65;
 }
-.kpi:hover{border-color:var(--border)}
-.kpi-label{
-  font-size:.62rem;text-transform:uppercase;
-  letter-spacing:.8px;color:var(--text-muted);
-  margin-bottom:6px;font-weight:500;
+.kpi:hover {
+  background: var(--bg-hover);
+  border-color: var(--kpi-color, var(--gold));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
 }
-.kpi-value{
-  font-family:'Montserrat',sans-serif;
-  font-size:1.6rem;font-weight:700;
-  color:var(--text);line-height:1;
+.kpi:hover::before { opacity: 1; }
+
+.kpi-label {
+  font-family: 'Inter', sans-serif;
+  font-size: .62rem; text-transform: uppercase;
+  letter-spacing: .9px; color: var(--text-muted);
+  margin-bottom: 8px; font-weight: 500;
 }
-.kpi-value.red{color:var(--red)}
-.kpi-value.amber{color:var(--gold)}
-.kpi-value.muted{color:var(--text-muted);font-size:1.25rem}
-.kpi.accent::before{opacity:1}
-.kpi.accent{border-color:rgba(201,168,76,.3)}
+.kpi-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.7rem; font-weight: 700;
+  color: var(--text-primary); line-height: 1;
+}
+.kpi-value.red    { color: var(--danger); }
+.kpi-value.amber  { color: var(--gold); }
+.kpi-value.muted  { color: var(--text-muted); font-size: 1.3rem; }
+.kpi-value.green  { color: var(--success-light); }
+
+/* KPI con acento vino en total */
+.kpi.kpi-featured { --kpi-color: var(--gold); }
+.kpi.kpi-sin      { --kpi-color: var(--danger); }
+.kpi.kpi-err      { --kpi-color: var(--text-muted); }
+.kpi.kpi-ced      { --kpi-color: var(--mod-cedular); }
+.kpi.kpi-pro      { --kpi-color: var(--mod-profesional); }
+.kpi.kpi-hos      { --kpi-color: var(--mod-hospedaje); }
 
 /* ── CONTROLS ── */
-.controls{
-  padding:14px 24px 10px;
-  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+.controls {
+  padding: 16px 32px 12px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
 }
-.search-wrap{
-  flex:1;min-width:220px;position:relative;
+.search-wrap { flex: 1; min-width: 220px; position: relative; }
+.search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: .85rem; pointer-events: none;
 }
-.search-icon{
-  position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  color:var(--text-dim);font-size:.85rem;pointer-events:none;
+.controls input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  font-size: .84rem; color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  outline: none; transition: var(--transition);
 }
-.controls input{
-  width:100%;
-  padding:9px 12px 9px 34px;
-  background:var(--bg2);
-  border:1px solid var(--border2);
-  border-radius:8px;
-  font-size:.84rem;color:var(--text);
-  font-family:'Inter',sans-serif;
-  outline:none;transition:border-color .2s;
-}
-.controls input::placeholder{color:var(--text-dim)}
-.controls input:focus{border-color:var(--gold)}
+.controls input::placeholder { color: var(--text-muted); }
+.controls input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(216,163,60,.12); }
 
-.filter-row{display:flex;gap:6px;flex-wrap:wrap}
-.chip{
-  padding:6px 13px;border-radius:20px;
-  border:1px solid var(--border2);
-  background:var(--bg2);
-  font-size:.72rem;cursor:pointer;font-weight:500;
-  color:var(--text-muted);
-  transition:all .15s;
-  font-family:'Inter',sans-serif;
+/* Filter chips */
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip {
+  padding: 7px 15px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  font-size: .72rem; cursor: pointer; font-weight: 500;
+  color: var(--text-muted); font-family: 'Inter', sans-serif;
+  transition: var(--transition);
 }
-.chip:hover{border-color:var(--gold);color:var(--gold)}
-.chip.active{
-  background:var(--gold);
-  color:var(--bg);
-  border-color:var(--gold);
-  font-weight:700;
+.chip:hover { border-color: var(--gold); color: var(--gold); }
+.chip.active {
+  background: var(--gold); color: var(--wine-dark);
+  border-color: var(--gold); font-weight: 700;
 }
 
-.btn{
-  padding:8px 16px;border:none;border-radius:7px;
-  cursor:pointer;font-size:.78rem;font-weight:600;
-  transition:all .15s;font-family:'Inter',sans-serif;
-  white-space:nowrap;
+/* Buttons */
+.btn {
+  padding: 9px 20px; border: none; border-radius: var(--radius-btn);
+  cursor: pointer; font-size: .8rem; font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: var(--transition); white-space: nowrap;
 }
-.btn-wine{
-  background:var(--wine);color:#fff;
-  border:1px solid var(--wine-light);
+/* Primario: fondo dorado, texto vino oscuro */
+.btn-primary {
+  background: var(--gold); color: var(--wine-dark);
+  border: 1px solid var(--gold-light);
 }
-.btn-wine:hover{background:var(--wine-light)}
-.btn-gold{
-  background:var(--gold);color:var(--bg);
-  border:1px solid var(--gold-light);font-weight:700;
+.btn-primary:hover { background: var(--gold-light); box-shadow: 0 4px 16px rgba(216,163,60,.35); }
+
+/* Secundario: transparente, borde dorado */
+.btn-secondary {
+  background: transparent; color: var(--gold);
+  border: 1px solid var(--gold);
 }
-.btn-gold:hover{background:var(--gold-light)}
-.btn-outline{
-  background:transparent;color:var(--text-muted);
-  border:1px solid var(--border2);
-}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-.btn:disabled{opacity:.35;cursor:default}
+.btn-secondary:hover { background: rgba(216,163,60,.1); color: var(--gold-light); border-color: var(--gold-light); }
+
+.btn:disabled { opacity: .35; cursor: default; }
 
 /* ── TABLE ── */
-.table-wrap{padding:0 24px 12px;overflow-x:auto}
-table{
-  width:100%;border-collapse:collapse;
-  background:var(--bg2);
-  border-radius:var(--radius);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  font-size:.81rem;
+.table-wrap { padding: 0 32px 16px; overflow-x: auto; }
+table {
+  width: 100%; border-collapse: collapse;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  font-size: .82rem;
 }
-thead{background:linear-gradient(90deg, var(--wine-dark), var(--wine))}
-th{
-  padding:11px 13px;text-align:left;
-  font-family:'Montserrat',sans-serif;
-  font-weight:600;cursor:pointer;user-select:none;
-  white-space:nowrap;font-size:.72rem;
-  letter-spacing:.4px;color:#fff;
-  border-bottom:1px solid rgba(201,168,76,.25);
+thead { background: linear-gradient(90deg, var(--wine-dark), var(--wine)); }
+th {
+  padding: 13px 16px; text-align: left;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600; cursor: pointer; user-select: none;
+  white-space: nowrap; font-size: .7rem; letter-spacing: .5px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(216,163,60,.2);
 }
-th:hover{background:rgba(255,255,255,.08)}
-th.chk{text-align:center}
-td{
-  padding:9px 13px;
-  border-bottom:1px solid var(--border2);
-  vertical-align:middle;color:var(--text);
+th:hover { background: rgba(255,255,255,.07); }
+th.chk { text-align: center; }
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(70,48,60,.5);
+  vertical-align: middle; color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
 }
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(201,168,76,.04)}
-.yes{color:var(--green);font-weight:700}
-.no{color:var(--text-dim);opacity:.6}
-.rfc-cell{
-  font-family:'Courier New',monospace;
-  font-size:.77rem;white-space:nowrap;
-  color:var(--gold-light);letter-spacing:.3px;
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-hover); }
+
+.yes { color: var(--success-light); font-weight: 700; font-size: 1rem; }
+.no  { color: var(--text-muted); opacity: .5; }
+
+.rfc-cell {
+  font-family: 'Courier New', monospace;
+  font-size: .77rem; white-space: nowrap;
+  color: var(--gold-light); letter-spacing: .4px;
 }
-.num-cell{color:var(--text-dim);font-size:.72rem}
-.nombre-cell{max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
-.dir-cell{
-  max-width:185px;overflow:hidden;text-overflow:ellipsis;
-  white-space:nowrap;color:var(--text-muted);font-size:.77rem;
+.num-cell { color: var(--text-muted); font-size: .7rem; }
+.nombre-cell {
+  max-width: 210px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  font-weight: 500; color: var(--text-primary);
 }
-.trab-cell{
-  text-align:right;font-weight:600;
-  font-family:'Montserrat',sans-serif;
-  color:var(--text);
+.dir-cell {
+  max-width: 190px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  color: var(--text-secondary); font-size: .77rem;
 }
-td.chk{text-align:center;font-size:.95rem}
+.trab-cell {
+  text-align: right; font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-primary);
+}
+td.chk { text-align: center; font-size: 1rem; }
 
 /* ── PAGINATION ── */
-.pagination{
-  display:flex;gap:8px;justify-content:center;
-  align-items:center;padding:4px 24px 24px;
+.pagination {
+  display: flex; gap: 8px; justify-content: center;
+  align-items: center; padding: 8px 32px 32px;
 }
-#pageInfo{
-  font-size:.78rem;color:var(--text-muted);
-  padding:0 4px;
+#pageInfo {
+  font-size: .78rem; color: var(--text-muted);
+  font-family: 'Inter', sans-serif; padding: 0 8px;
 }
 
 /* ── NO DATA ── */
-#noData{
-  text-align:center;padding:50px 24px;
-  color:var(--text-dim);display:none;
-  font-size:.9rem;
+#noData {
+  text-align: center; padding: 56px 32px;
+  color: var(--text-muted); display: none;
+  font-size: .9rem; font-family: 'Inter', sans-serif;
 }
 
 /* ── FOOTER ── */
-footer{
-  text-align:center;padding:16px;
-  font-size:.65rem;color:var(--text-dim);
-  border-top:1px solid var(--border2);
-  margin-top:8px;
+footer {
+  text-align: center; padding: 20px 32px;
+  font-size: .64rem; color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  border-top: 1px solid rgba(70,48,60,.5);
 }
 </style>
 </head>
 <body>
 
+<!-- HEADER INSTITUCIONAL -->
 <header>
   <div class="header-brand">
     <div class="header-logo">🏛️</div>
@@ -299,13 +358,15 @@ footer{
   </div>
 </header>
 
+<!-- BANNER DE CARGA -->
 <div id="loadBanner">
   <div class="spinner"></div>
   <span id="bannerText">Cargando datos actualizados…</span>
 </div>
 
+<!-- KPI CARDS -->
 <div class="kpi-grid">
-  <div class="kpi accent">
+  <div class="kpi kpi-featured">
     <div class="kpi-label">Total IMSS Mayo 2026</div>
     <div class="kpi-value" id="k-imss">—</div>
   </div>
@@ -313,28 +374,29 @@ footer{
     <div class="kpi-label">Padrón Nómina</div>
     <div class="kpi-value" id="k-nom">—</div>
   </div>
-  <div class="kpi">
+  <div class="kpi kpi-sin">
     <div class="kpi-label">Sin Nómina ⚠</div>
     <div class="kpi-value red" id="k-sin">—</div>
   </div>
-  <div class="kpi">
+  <div class="kpi kpi-err">
     <div class="kpi-label">Corregidos (error RFC)</div>
     <div class="kpi-value muted" id="k-err">—</div>
   </div>
-  <div class="kpi">
+  <div class="kpi kpi-ced">
     <div class="kpi-label">Cedular Emp.</div>
     <div class="kpi-value amber" id="k-ced">—</div>
   </div>
-  <div class="kpi">
+  <div class="kpi kpi-pro">
     <div class="kpi-label">Profesional</div>
     <div class="kpi-value amber" id="k-pro">—</div>
   </div>
-  <div class="kpi">
+  <div class="kpi kpi-hos">
     <div class="kpi-label">Hospedaje</div>
     <div class="kpi-value amber" id="k-hos">—</div>
   </div>
 </div>
 
+<!-- CONTROLES -->
 <div class="controls">
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
@@ -349,15 +411,16 @@ footer{
     <div class="chip"        id="f-agua"    onclick="setFilter('agua')"       >Agua</div>
     <div class="chip"        id="f-ninguno" onclick="setFilter('ninguno')"    >Sin padrón</div>
   </div>
-  <button class="btn btn-gold"    onclick="exportExcel()">⬇ Excel</button>
-  <button class="btn btn-outline" onclick="exportCSV()"  >⬇ CSV</button>
+  <button class="btn btn-primary"   onclick="exportExcel()">⬇ Excel</button>
+  <button class="btn btn-secondary" onclick="exportCSV()"  >⬇ CSV</button>
 </div>
 
+<!-- TABLA -->
 <div class="table-wrap">
   <table>
     <thead>
       <tr>
-        <th onclick="sortBy('rfc')">#  RFC ↕</th>
+        <th onclick="sortBy('rfc')">#&nbsp; RFC ↕</th>
         <th onclick="sortBy('nombre')">Nombre / Razón Social ↕</th>
         <th onclick="sortBy('direccion')">Dirección ↕</th>
         <th onclick="sortBy('trabajadores')" style="text-align:right">Trab. ↕</th>
@@ -370,17 +433,19 @@ footer{
     </thead>
     <tbody id="tbody"></tbody>
   </table>
-  <div id="noData">No se encontraron registros.</div>
+  <div id="noData">No se encontraron registros con los filtros aplicados.</div>
 </div>
 
+<!-- PAGINACIÓN -->
 <div class="pagination">
-  <button class="btn btn-outline" id="btnPrev" onclick="changePage(-1)">&#8249; Ant</button>
+  <button class="btn btn-secondary" id="btnPrev" onclick="changePage(-1)">&#8249; Anterior</button>
   <span id="pageInfo">—</span>
-  <button class="btn btn-outline" id="btnNext" onclick="changePage(1)">Sig &#8250;</button>
+  <button class="btn btn-secondary" id="btnNext" onclick="changePage(1)">Siguiente &#8250;</button>
 </div>
 
-<footer>AAFY · Depto. de Control y Evaluación de Obligaciones · Datos actualizados automáticamente de lunes a viernes</footer>
+<footer>AAFY · Depto. de Control y Evaluación de Obligaciones · Actualización automática lunes–viernes 10:00 AM</footer>
 
+<!-- ═══════════════ JAVASCRIPT (sin cambios en lógica) ═══════════════ -->
 <script>
 var PAGE_SIZE = 100;
 var allRows = [], filtered = [], sortCol = '', sortAsc = true, curFilter = 'all', curPage = 1;
@@ -435,7 +500,7 @@ function applyFilters(){
 
 function sortBy(col){ if(sortCol===col) sortAsc=!sortAsc; else{sortCol=col;sortAsc=true;} applyFilters(); }
 
-function chk(v){ return v?'<span class="yes">&#10003;</span>':'<span class="no">&#10007;</span>'; }
+function chk(v){ return v?'<span class="yes">&#10003;</span>':'<span class="no">&#215;</span>'; }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -453,9 +518,9 @@ function renderTable(){
     document.getElementById('noData').style.display='none';
     tbody.innerHTML=slice.map(function(r,i){
       return '<tr>'+
-        '<td><span class="num-cell">'+(start+i+1)+'. </span><span class="rfc-cell">'+esc(r.rfc)+'</span></td>'+
+        '<td><span class="num-cell">'+(start+i+1)+'.&nbsp;</span><span class="rfc-cell">'+esc(r.rfc)+'</span></td>'+
         '<td class="nombre-cell" title="'+esc(r.nombre)+'">'+esc(r.nombre||'&#8212;')+'</td>'+
-        '<td class="dir-cell"   title="'+esc(r.direccion)+'">'+esc(r.direccion||'&#8212;')+'</td>'+
+        '<td class="dir-cell"    title="'+esc(r.direccion)+'">'+esc(r.direccion||'&#8212;')+'</td>'+
         '<td class="trab-cell">'+(r.trabajadores!=null?r.trabajadores.toLocaleString('es-MX'):'&#8212;')+'</td>'+
         '<td class="chk">'+chk(r.cedular_emp)+'</td>'+
         '<td class="chk">'+chk(r.profesional)+'</td>'+
@@ -465,12 +530,14 @@ function renderTable(){
         '</tr>';
     }).join('');
   }
-  setText('pageInfo',total?'Pag. '+curPage+'/'+pages+' — '+total.toLocaleString('es-MX')+' registros':'0 registros');
-  document.getElementById('btnPrev').disabled=curPage<=1;
-  document.getElementById('btnNext').disabled=curPage>=pages;
+  setText('pageInfo', total
+    ? 'Pág. '+curPage+' / '+pages+' — '+total.toLocaleString('es-MX')+' registros'
+    : '0 registros');
+  document.getElementById('btnPrev').disabled = curPage <= 1;
+  document.getElementById('btnNext').disabled = curPage >= pages;
 }
 
-function changePage(d){ curPage+=d; renderTable(); }
+function changePage(d){ curPage += d; renderTable(); }
 
 function exportExcel(){
   if(typeof XLSX==='undefined'){ alert('La librería Excel aún está cargando, espera un momento.'); return; }
@@ -497,13 +564,16 @@ function exportExcel(){
 function exportCSV(){
   var rows=[['RFC','Nombre / Razón Social','Dirección','Trabajadores','Cedular Emp.','Profesional','Hospedaje','Gases','Agua']];
   filtered.forEach(function(r){
-    rows.push([r.rfc,r.nombre||'',r.direccion||'',r.trabajadores!=null?r.trabajadores:'',
-      r.cedular_emp?'SI':'NO',r.profesional?'SI':'NO',r.hospedaje?'SI':'NO',r.gases?'SI':'NO',r.agua?'SI':'NO']);
+    rows.push([r.rfc, r.nombre||'', r.direccion||'', r.trabajadores!=null?r.trabajadores:'',
+      r.cedular_emp?'SI':'NO', r.profesional?'SI':'NO', r.hospedaje?'SI':'NO',
+      r.gases?'SI':'NO', r.agua?'SI':'NO']);
   });
-  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-  var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
-  a.download='auditoria_fiscal_'+new Date().toISOString().slice(0,10)+'.csv';
+  var csv = rows.map(function(r){
+    return r.map(function(v){ return '"'+String(v).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.download = 'auditoria_fiscal_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
 
@@ -515,21 +585,25 @@ function loadData(){
       allRows = data.rows||[];
       renderStats(data.stats||{});
       if(data.updated){
-        var d=new Date(data.updated);
-        setText('updatedAt','Act: '+d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})+' UTC');
+        var d = new Date(data.updated);
+        setText('updatedAt',
+          'Act: '+d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})+
+          ' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})+' UTC');
       }
-      setStatus('ok','✓ '+allRows.length.toLocaleString('es-MX')+' registros');
-      setBanner('',false);
+      setStatus('ok', '✓ '+allRows.length.toLocaleString('es-MX')+' registros');
+      setBanner('', false);
       sortCol = 'trabajadores'; sortAsc = false;
       setFilter('all');
     })
     .catch(function(e){
       console.error(e);
-      setStatus('error','⚠ Sin datos');
-      var b=document.getElementById('loadBanner');
-      b.style.cssText='background:rgba(231,76,76,.1);border:1px solid rgba(231,76,76,.3);border-radius:10px;padding:11px 18px;margin:16px 24px 0;display:flex;align-items:center;gap:10px;font-size:.84rem;color:#ffaaaa;';
-      document.getElementById('bannerText').textContent='No se pudo cargar data.json — ejecuta el workflow en GitHub Actions.';
-      document.querySelector('#loadBanner .spinner').style.display='none';
+      setStatus('error', '⚠ Sin datos');
+      var b = document.getElementById('loadBanner');
+      b.style.borderLeftColor = 'var(--danger)';
+      b.style.color = '#ffb8b8';
+      document.getElementById('bannerText').textContent =
+        'No se pudo cargar data.json — ejecuta el workflow en GitHub Actions.';
+      document.querySelector('#loadBanner .spinner').style.display = 'none';
     });
 }
 
