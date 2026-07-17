@@ -564,9 +564,15 @@ footer { padding:18px 32px; background:var(--siife-superficie); border-top:1px s
       <div class="reinc-title">Patrones reincidentes entre meses</div>
       <div class="reinc-subtitle">Patrones detectados en más de un mes del periodo analizado.</div>
     </div>
-    <div class="reinc-count">
-      <span id="reincTotal">—</span>
-      <small>detectados más de una vez</small>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div class="reinc-count">
+        <span id="reincTotal">—</span>
+        <small>detectados más de una vez</small>
+      </div>
+      <button class="btn btn-primary" onclick="exportReincExcel()" style="min-height:34px;padding:7px 13px;font-size:.74rem">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Exportar Excel
+      </button>
     </div>
   </div>
   <div class="reinc-table-wrap">
@@ -576,6 +582,7 @@ footer { padding:18px 32px; background:var(--siife-superficie); border-top:1px s
           <th style="text-align:center;width:42px">#</th>
           <th>RFC</th>
           <th>Nombre / Razón Social</th>
+          <th>Dirección</th>
           <th style="text-align:right">Trab.</th>
           <th>Historial de meses</th>
         </tr>
@@ -806,7 +813,7 @@ function renderReincidentes(currentMonth){
   var rfcMap={};
   Object.keys(porMes).forEach(function(month){
     (porMes[month].rows||[]).forEach(function(r){
-      if(!rfcMap[r.rfc]) rfcMap[r.rfc]={rfc:r.rfc,nombre:r.nombre,trabajadores:r.trabajadores,meses:[]};
+      if(!rfcMap[r.rfc]) rfcMap[r.rfc]={rfc:r.rfc,nombre:r.nombre,direccion:r.direccion||'',trabajadores:r.trabajadores,meses:[]};
       if(rfcMap[r.rfc].meses.indexOf(month)===-1) rfcMap[r.rfc].meses.push(month);
     });
   });
@@ -829,6 +836,7 @@ function renderReincidentes(currentMonth){
       '<td class="num-cell" style="text-align:center;font-weight:700;color:var(--siife-texto-tenue)">'+(i+1)+'</td>'+
       '<td><span class="rfc-cell">'+esc(r.rfc)+'</span></td>'+
       '<td class="nombre-cell" title="'+esc(r.nombre)+'">'+esc(r.nombre||'&#8212;')+'</td>'+
+      '<td class="dir-cell"    title="'+esc(r.direccion)+'">'+esc(r.direccion||'&#8212;')+'</td>'+
       '<td class="trab-cell">'+(r.trabajadores!=null?r.trabajadores.toLocaleString('es-MX'):'&#8212;')+'</td>'+
       '<td><div class="mes-history">'+chips+'</div></td>'+
       '</tr>';
@@ -1232,6 +1240,44 @@ function refreshFromDrive(){
   }).finally(function(){
     setRefreshState(false);
   });
+}
+
+/* ══════════════════════════════════════════════════════
+   EXPORTAR REINCIDENTES
+══════════════════════════════════════════════════════ */
+function exportReincExcel(){
+  if(typeof XLSX==='undefined'){ alert('La librería Excel aún está cargando.'); return; }
+  /* Reconstruir lista reincidentes igual que renderReincidentes */
+  var rfcMap={};
+  Object.keys(porMes).forEach(function(month){
+    (porMes[month].rows||[]).forEach(function(r){
+      if(!rfcMap[r.rfc]) rfcMap[r.rfc]={rfc:r.rfc,nombre:r.nombre,direccion:r.direccion||'',trabajadores:r.trabajadores,meses:[]};
+      if(rfcMap[r.rfc].meses.indexOf(month)<0) rfcMap[r.rfc].meses.push(month);
+    });
+  });
+  var reinc=Object.keys(rfcMap).filter(function(k){ return rfcMap[k].meses.length>1; })
+    .map(function(k){ return rfcMap[k]; });
+  reinc.sort(function(a,b){
+    var ta=a.trabajadores!=null?a.trabajadores:-1;
+    var tb=b.trabajadores!=null?b.trabajadores:-1;
+    return tb-ta;
+  });
+  var data=reinc.map(function(r,i){
+    return {
+      '#':                   i+1,
+      'RFC':                 r.rfc,
+      'Nombre / Razón Social': r.nombre||'',
+      'Dirección':           r.direccion||'',
+      'Trabajadores':        r.trabajadores!=null?r.trabajadores:'',
+      'Meses detectado':     r.meses.slice().sort().map(mesLabel).join(', '),
+      'Total meses':         r.meses.length
+    };
+  });
+  var ws=XLSX.utils.json_to_sheet(data);
+  var wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Reincidentes');
+  ws['!cols']=[{wch:5},{wch:18},{wch:38},{wch:32},{wch:12},{wch:45},{wch:12}];
+  XLSX.writeFile(wb,'reincidentes_'+(activeMonth||new Date().toISOString().slice(0,7))+'.xlsx');
 }
 
 /* ══════════════════════════════════════════════════════
