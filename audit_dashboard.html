@@ -699,7 +699,7 @@ function selectMonth(month){
   setText('tableTitle','Patrones identificados — '+mesLabel(month));
   setText('lbl-imss','Total IMSS '+mesAbrev(month)+' '+month.slice(0,4));
   curPage=1;
-  setFilter('all', true);
+  setFilter('all');
   renderReincidentes(month);
 }
 
