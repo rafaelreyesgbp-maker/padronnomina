@@ -593,6 +593,11 @@ footer { padding:18px 32px; background:var(--siife-superficie); border-top:1px s
       No hay patrones que aparezcan en más de un mes aún.
     </div>
   </div>
+  <div class="pagination" style="padding:10px 24px 18px">
+    <button class="btn btn-secondary" id="reincBtnPrev" onclick="changeReincPage(-1)">‹ Anterior</button>
+    <span id="reincPageInfo" style="color:var(--siife-texto-tenue);font-size:.75rem;font-weight:600;padding:0 6px">—</span>
+    <button class="btn btn-secondary" id="reincBtnNext" onclick="changeReincPage(1)">Siguiente ›</button>
+  </div>
 </section>
 
 <footer>SIIFE · Agencia de Administración Fiscal de Yucatán · Depto. de Control y Evaluación de Obligaciones</footer>
@@ -601,16 +606,19 @@ footer { padding:18px 32px; background:var(--siife-superficie); border-top:1px s
 /* ══════════════════════════════════════════════════════
    ESTADO GLOBAL
 ══════════════════════════════════════════════════════ */
-var PAGE_SIZE   = 50;
-var porMes      = {};
-var mesesList   = [];
-var activeMonth = '';
-var allRows     = [];
-var filtered    = [];
-var sortCol     = 'trabajadores';
-var sortAsc     = false;
-var curFilter   = 'all';
-var curPage     = 1;
+var PAGE_SIZE        = 50;
+var REINC_PAGE_SIZE  = 50;
+var porMes           = {};
+var mesesList        = [];
+var activeMonth      = '';
+var allRows          = [];
+var filtered         = [];
+var sortCol          = 'trabajadores';
+var sortAsc          = false;
+var curFilter        = 'all';
+var curPage          = 1;
+var reincRows        = [];   // lista completa de reincidentes (ordenada)
+var reincPage        = 1;
 
 var MES_ABREV = {
   '01':'Ene','02':'Feb','03':'Mar','04':'Abr','05':'May','06':'Jun',
@@ -817,31 +825,53 @@ function renderReincidentes(currentMonth){
       if(rfcMap[r.rfc].meses.indexOf(month)===-1) rfcMap[r.rfc].meses.push(month);
     });
   });
-  var reinc=Object.keys(rfcMap).filter(function(k){ return rfcMap[k].meses.length>1; }).map(function(k){ return rfcMap[k]; });
-  reinc.sort(function(a,b){
+  reincRows=Object.keys(rfcMap).filter(function(k){ return rfcMap[k].meses.length>1; }).map(function(k){ return rfcMap[k]; });
+  reincRows.sort(function(a,b){
     var ta=a.trabajadores!=null?a.trabajadores:-1;
     var tb=b.trabajadores!=null?b.trabajadores:-1;
     return tb-ta;
   });
-  setText('reincTotal', reinc.length.toLocaleString('es-MX'));
+  reincPage=1;
+  setText('reincTotal', reincRows.length.toLocaleString('es-MX'));
+  renderReincPage(currentMonth);
+}
+
+function renderReincPage(currentMonth){
+  /* Si no se pasa currentMonth, usamos activeMonth */
+  var cm=currentMonth||activeMonth;
   var tbody=document.getElementById('reinc-tbody');
   var empty=document.getElementById('reinc-empty');
-  if(!reinc.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  tbody.innerHTML=reinc.map(function(r,i){
-    var chips=r.meses.slice().sort().map(function(m){
-      return '<span class="mes-hist-chip '+(m===currentMonth?'current':'other')+'">'+mesAbrev(m)+' '+m.slice(0,4)+'</span>';
+  var total=reincRows.length;
+  var pages=Math.max(1,Math.ceil(total/REINC_PAGE_SIZE));
+  if(reincPage>pages) reincPage=pages;
+  var start=(reincPage-1)*REINC_PAGE_SIZE;
+  var slice=reincRows.slice(start,start+REINC_PAGE_SIZE);
+
+  if(!total){ tbody.innerHTML=''; empty.style.display='block'; }
+  else {
+    empty.style.display='none';
+    tbody.innerHTML=slice.map(function(r,i){
+      var chips=r.meses.slice().sort().map(function(m){
+        return '<span class="mes-hist-chip '+(m===cm?'current':'other')+'">'+mesAbrev(m)+' '+m.slice(0,4)+'</span>';
+      }).join('');
+      return '<tr>'+
+        '<td class="num-cell" style="text-align:center;font-weight:700;color:var(--siife-texto-tenue)">'+(start+i+1)+'</td>'+
+        '<td><span class="rfc-cell">'+esc(r.rfc)+'</span></td>'+
+        '<td class="nombre-cell" title="'+esc(r.nombre)+'">'+esc(r.nombre||'&#8212;')+'</td>'+
+        '<td class="dir-cell"    title="'+esc(r.direccion)+'">'+esc(r.direccion||'&#8212;')+'</td>'+
+        '<td class="trab-cell">'+(r.trabajadores!=null?r.trabajadores.toLocaleString('es-MX'):'&#8212;')+'</td>'+
+        '<td><div class="mes-history">'+chips+'</div></td>'+
+        '</tr>';
     }).join('');
-    return '<tr>'+
-      '<td class="num-cell" style="text-align:center;font-weight:700;color:var(--siife-texto-tenue)">'+(i+1)+'</td>'+
-      '<td><span class="rfc-cell">'+esc(r.rfc)+'</span></td>'+
-      '<td class="nombre-cell" title="'+esc(r.nombre)+'">'+esc(r.nombre||'&#8212;')+'</td>'+
-      '<td class="dir-cell"    title="'+esc(r.direccion)+'">'+esc(r.direccion||'&#8212;')+'</td>'+
-      '<td class="trab-cell">'+(r.trabajadores!=null?r.trabajadores.toLocaleString('es-MX'):'&#8212;')+'</td>'+
-      '<td><div class="mes-history">'+chips+'</div></td>'+
-      '</tr>';
-  }).join('');
+  }
+  setText('reincPageInfo', total
+    ?'Pág. '+reincPage+' / '+pages+' — '+total.toLocaleString('es-MX')+' reincidentes'
+    :'0 reincidentes');
+  document.getElementById('reincBtnPrev').disabled=reincPage<=1;
+  document.getElementById('reincBtnNext').disabled=reincPage>=pages;
 }
+
+function changeReincPage(d){ reincPage+=d; renderReincPage(); }
 
 /* ══════════════════════════════════════════════════════
    EXPORTAR
